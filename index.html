@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le Grand Tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#2a2140; --ink-soft:#5b5073;
+  --glass:rgba(255,255,255,.62); --glass-line:rgba(255,255,255,.8);
+  --page:#cfe6ff;
+  --accent:#ff9f1c; --accent2:#2b2d42; --tint:#ffe8c2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#f6f1ff; --ink-soft:#cfc6e6;
+    --glass:rgba(28,22,46,.58); --glass-line:rgba(255,255,255,.18);
+    --page:#14102a;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#f6f1ff; --ink-soft:#cfc6e6;
+  --glass:rgba(28,22,46,.58); --glass-line:rgba(255,255,255,.18);
+  --page:#14102a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--page);}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);-webkit-tap-highlight-color:transparent;user-select:none;touch-action:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+
+/* ---------- decor ---------- */
+.bgs{position:fixed;inset:-6%;z-index:0}
+.bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(26px) saturate(1.25);opacity:0;transform:scale(1.08);transition:opacity 1.4s ease, transform 6s ease}
+.bg.on{opacity:1;transform:scale(1)}
+.veil{position:fixed;inset:0;z-index:1;background:
+  radial-gradient(120% 70% at 50% 100%, color-mix(in srgb,var(--accent) 35%, transparent), transparent 60%),
+  linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 40%, rgba(20,10,40,.28));transition:background 1s}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .veil{background:radial-gradient(120% 70% at 50% 100%, color-mix(in srgb,var(--accent) 35%, transparent), transparent 60%),linear-gradient(180deg,rgba(10,6,30,.45),rgba(10,6,30,.2) 40%,rgba(5,2,20,.6))}}
+.sun{position:fixed;z-index:1;top:-14vmin;right:-10vmin;width:46vmin;height:46vmin;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg, rgba(255,255,255,.28) 0 6deg, transparent 6deg 18deg);
+  -webkit-mask:radial-gradient(circle, #000 0 30%, transparent 70%);mask:radial-gradient(circle, #000 0 30%, transparent 70%);
+  animation:spin 60s linear infinite;pointer-events:none}
+.cloud{position:fixed;z-index:1;left:-30vw;height:8vmin;width:22vmin;border-radius:99px;background:rgba(255,255,255,.85);filter:blur(1px);opacity:.75;pointer-events:none;animation:drift linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.cloud::before{width:55%;height:150%;left:14%;top:-70%}
+.cloud::after{width:42%;height:120%;right:12%;top:-45%}
+@keyframes drift{to{transform:translateX(160vw)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+#fx{position:fixed;inset:0;z-index:2;pointer-events:none}
+
+/* ---------- header ---------- */
+header{position:fixed;z-index:20;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top)) 20px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:clamp(20px,3.4vw,30px);letter-spacing:.2px;text-shadow:0 2px 0 rgba(255,255,255,.55)}
+.brand .dot{width:34px;height:34px;border-radius:50%;background:conic-gradient(var(--accent),#fff,var(--accent));box-shadow:0 4px 12px rgba(0,0,0,.25);animation:spin 5s linear infinite;position:relative;transition:background 1s}
+.brand .dot::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--glass);backdrop-filter:blur(4px)}
+.brand b{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;transition:all 1s}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;background:var(--glass);border:1px solid var(--glass-line);backdrop-filter:blur(12px);font-weight:700;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.12);transition:transform .2s}
+.pill:hover{transform:translateY(-2px)}
+.pill:focus-visible,.nav:focus-visible,.dot-btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- panel ---------- */
+.panel{position:fixed;z-index:15;left:clamp(16px,3vw,44px);top:calc(74px + env(safe-area-inset-top));width:min(400px,calc(100vw - 32px));padding:18px 20px 18px;border-radius:26px;background:var(--glass);border:1px solid var(--glass-line);backdrop-filter:blur(16px) saturate(1.3);box-shadow:0 18px 50px rgba(0,0,0,.18);transition:opacity .8s, transform .8s}
+.panel .num{font-family:'Baloo 2';font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);display:flex;gap:8px;align-items:center;transition:color 1s}
+.panel .num i{display:block;height:3px;width:44px;border-radius:3px;background:var(--accent);transition:background 1s}
+.panel h1{font-family:'Baloo 2';font-weight:800;font-size:clamp(28px,4.4vw,44px);line-height:1;margin:6px 0 4px}
+.panel .tag{font-weight:700;color:var(--ink-soft);font-size:15px;margin-bottom:8px}
+.panel p{font-size:15px;line-height:1.45;color:var(--ink)}
+.swap{animation:swap .7s cubic-bezier(.2,.9,.3,1) both}
+.swap .l2{animation-delay:.07s}.swap .l3{animation-delay:.14s}.swap .l4{animation-delay:.21s}
+.l1,.l2,.l3,.l4{display:block}
+.swap > *{animation:swapin .7s cubic-bezier(.2,.9,.3,1) both}
+.swap > :nth-child(2){animation-delay:.08s}.swap > :nth-child(3){animation-delay:.16s}.swap > :nth-child(4){animation-delay:.24s}
+@keyframes swapin{from{opacity:0;transform:translateY(14px) rotate(-1deg)}to{opacity:1;transform:none}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips span{padding:4px 10px;border-radius:99px;font-size:12.5px;font-weight:700;background:color-mix(in srgb,var(--accent) 22%, transparent);border:1px solid color-mix(in srgb,var(--accent) 45%, transparent)}
+
+/* ---------- stage ---------- */
+.stage{position:fixed;inset:0;z-index:5;cursor:grab}
+.stage.drag{cursor:grabbing}
+.layer{position:absolute;inset:0;will-change:transform}
+.disc-base{position:absolute;border-radius:50%;background:linear-gradient(#5b4d82,#3c3160);
+  box-shadow:0 4px 0 #4e4274,0 8px 0 #473b6a,0 12px 0 #403560,0 16px 0 #392f57,0 20px 0 #33294d,0 24px 0 #2c2441,0 50px 60px rgba(10,5,30,.45)}
+.disc-top{position:absolute;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 50% 50%, #fff6, transparent 40%),radial-gradient(circle, color-mix(in srgb,var(--accent) 25%, #fff6ff) 0%, color-mix(in srgb,var(--accent) 55%, #9d8cd6) 72%, #5b4d82 100%);
+  box-shadow:inset 0 0 0 10px rgba(255,255,255,.55), inset 0 0 40px rgba(0,0,0,.25);transition:background 1s}
+.spin{position:absolute;inset:0;will-change:transform}
+.spin .wedges{position:absolute;inset:0;background:repeating-conic-gradient(rgba(255,255,255,.14) 0 10deg, transparent 10deg 20deg)}
+.spin .road{position:absolute;border-radius:50%;inset:7%;border:7vmin solid rgba(48,36,80,.38)}
+.spin .dash{position:absolute;border-radius:50%;inset:calc(7% + 3.5vmin - 3px);border:6px dashed rgba(255,255,255,.95)}
+.spin .inner{position:absolute;border-radius:50%;inset:30%;background:repeating-radial-gradient(circle,rgba(255,255,255,.28) 0 6px,transparent 6px 22px);}
+.pad{position:absolute;width:20%;height:20%;margin:-10% 0 0 -10%;border-radius:50%;background:rgba(255,255,255,.88);display:grid;place-items:center;font-size:clamp(20px,3.6vmin,44px);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 60%,#fff0),0 0 30px rgba(255,255,255,.9)}
+.pad span{display:block;transform:rotate(var(--r))}
+.rim-lights{position:absolute;border-radius:50%;pointer-events:none}
+
+.place{position:absolute;left:0;top:0;transform-origin:50% 100%;will-change:transform,filter;cursor:pointer}
+.place .float{animation:bob 4s ease-in-out infinite;animation-delay:var(--d)}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.card{position:relative;border-radius:20px;overflow:hidden;border:6px solid #fff;box-shadow:0 22px 38px rgba(30,15,60,.38), 0 0 0 2px rgba(255,255,255,.4);background:#fff;aspect-ratio:1.3}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.04);animation:kb 14s ease-in-out infinite alternate}
+@keyframes kb{to{transform:scale(1.14) translate(-1.5%,-1%)}}
+.card::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-120%);animation:shine 6s ease-in-out infinite;animation-delay:var(--d);pointer-events:none}
+@keyframes shine{0%,55%{transform:translateX(-120%)}85%,100%{transform:translateX(120%)}}
+.ribbon{position:absolute;left:50%;top:-14px;transform:translateX(-50%);padding:5px 16px;border-radius:99px;font-family:'Baloo 2';font-weight:800;font-size:15px;color:#fff;background:var(--c);white-space:nowrap;box-shadow:0 8px 16px rgba(0,0,0,.25);z-index:3}
+.stand{position:absolute;left:8%;right:8%;bottom:-14px;height:26px;border-radius:50%;background:rgba(20,10,50,.38);filter:blur(7px);z-index:-1}
+.steam{position:absolute;width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.85);filter:blur(4px);left:var(--x);top:var(--y);animation:steam 2.8s ease-out infinite;animation-delay:var(--d);opacity:0;z-index:2}
+@keyframes steam{0%{opacity:0;transform:translate(0,0) scale(.6)}25%{opacity:.9}100%{opacity:0;transform:translate(10px,-46px) scale(3)}}
+.fly{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff6a8;box-shadow:0 0 10px 4px #ffe96b;z-index:2;animation:fly 5s ease-in-out infinite;animation-delay:var(--d);left:var(--x);top:var(--y)}
+@keyframes fly{50%{transform:translate(18px,-14px);opacity:.3}}
+
+/* girl */
+.girl{position:absolute;left:0;top:0;transform-origin:50% 100%;z-index:900;pointer-events:none;will-change:transform}
+.girl .flip{transition:transform .5s cubic-bezier(.3,1.4,.5,1);transform-origin:50% 100%}
+.girl.rev .flip{transform:scaleX(-1)}
+.girl .ride{transform-origin:60% 100%;animation:idle 2.6s ease-in-out infinite}
+.girl.moving .ride{animation:ride .26s ease-in-out infinite}
+.girl .lean{transition:transform .5s ease;transform-origin:50% 100%}
+.girl.moving .lean{transform:rotate(-4deg) translateX(-4px)}
+.girl img{display:block;width:100%;height:auto;filter:drop-shadow(0 10px 8px rgba(30,10,60,.3))}
+@keyframes idle{50%{transform:translateY(-5px) rotate(.8deg)}}
+@keyframes ride{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-6px) rotate(.8deg)}}
+.gshadow{position:absolute;left:6%;right:2%;bottom:-3%;height:9%;border-radius:50%;background:rgba(20,5,50,.4);filter:blur(6px);transform:translateZ(0)}
+.lines{position:absolute;left:100%;bottom:14%;width:90%;opacity:0;transition:opacity .3s;pointer-events:none}
+.girl.rev .lines{left:auto;right:100%}
+.girl.moving .lines{opacity:1}
+.lines i{position:absolute;height:4px;border-radius:4px;background:linear-gradient(90deg,rgba(255,255,255,.95),transparent);left:0;width:var(--w);top:var(--t);animation:zoom .38s linear infinite;animation-delay:var(--d)}
+.girl.rev .lines i{background:linear-gradient(270deg,rgba(255,255,255,.95),transparent);left:auto;right:0;animation-name:zoomr}
+@keyframes zoom{from{transform:translateX(-30%);opacity:0}30%{opacity:1}to{transform:translateX(120%);opacity:0}}
+@keyframes zoomr{from{transform:translateX(30%);opacity:0}30%{opacity:1}to{transform:translateX(-120%);opacity:0}}
+.puff{position:absolute;border-radius:50%;background:rgba(255,255,255,.85);filter:blur(2px);pointer-events:none;animation:puff .9s ease-out forwards}
+@keyframes puff{from{opacity:.9;transform:translate(0,0) scale(.4)}to{opacity:0;transform:translate(var(--dx),-28px) scale(2.2)}}
+.emoji{position:fixed;z-index:30;font-size:clamp(22px,3vw,34px);pointer-events:none;animation:up 2.1s cubic-bezier(.2,.7,.3,1) forwards;filter:drop-shadow(0 4px 4px rgba(0,0,0,.25))}
+@keyframes up{0%{opacity:0;transform:translate(0,0) scale(.3)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-170px) rotate(var(--rot)) scale(1.2)}}
+
+/* ---------- controls ---------- */
+.ctrl{position:fixed;z-index:20;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:99px;background:var(--glass);border:1px solid var(--glass-line);backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:calc(100vw - 20px)}
+.nav{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:800;background:var(--accent);color:#fff;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000);transition:transform .15s, box-shadow .15s, background 1s}
+.nav:active{transform:translateY(4px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.dots{display:flex;gap:6px}
+.dot-btn{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:99px;font-weight:800;font-size:14px;transition:background .3s}
+.dot-btn .e{font-size:18px}
+.dot-btn .t{display:none}
+.dot-btn.on{background:color-mix(in srgb,var(--accent) 28%, transparent)}
+.dot-btn.on .t{display:inline}
+@media (min-width:900px){.dot-btn .t{display:inline}}
+.hint{position:fixed;z-index:19;bottom:calc(78px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);font-weight:800;font-size:13px;letter-spacing:.4px;padding:5px 14px;border-radius:99px;background:rgba(0,0,0,.42);color:#fff;animation:hint 3s ease-in-out infinite;pointer-events:none;transition:opacity .6s}
+@keyframes hint{50%{transform:translateX(-50%) translateY(-5px)}}
+
+/* intro */
+.hide{opacity:0;transform:translateY(-14px);pointer-events:none}
+.title-in{animation:swapin 1s .3s both}
+
+@media (max-width:720px){
+  .panel{top:calc(62px + env(safe-area-inset-top));padding:12px 14px;border-radius:20px}
+  .panel p{font-size:13.5px;line-height:1.35}
+  .panel .tag{font-size:13.5px;margin-bottom:4px}
+  .chips{margin-top:6px}
+  .brand .t2{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  .cloud,.sun,.card img,.place .float,.card::after,.brand .dot{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="bgs" id="bgs"></div>
+<div class="veil"></div>
+<div class="sun"></div>
+<div id="clouds"></div>
+<canvas id="fx"></canvas>
+
+<header>
+  <div class="brand"><span class="dot"></span><span>Le <b>Grand Tour</b></span></div>
+  <button class="pill" id="auto" aria-pressed="true"><span id="autoI">⏸</span><span id="autoT">Visite auto</span></button>
+</header>
+
+<section class="panel hide" id="panel" aria-live="polite"></section>
+
+<main class="stage" id="stage" aria-label="Plateforme tournante des lieux">
+  <div class="layer" id="lay">
+    <div class="disc-base" id="base"></div>
+    <div class="disc-top" id="top"><div class="spin" id="spin">
+      <div class="wedges"></div><div class="road"></div><div class="dash"></div><div class="inner"></div>
+    </div></div>
+    <div id="places"></div>
+    <div class="girl" id="girl"><div class="flip"><div class="lean"><div class="ride">
+      <div class="lines"><i style="--w:70%;--t:10%;--d:0s"></i><i style="--w:45%;--t:34%;--d:.12s"></i><i style="--w:80%;--t:58%;--d:.22s"></i><i style="--w:55%;--t:80%;--d:.06s"></i></div>
+      <img src="img/girl.png" alt="Petite fille en scooter" draggable="false">
+    </div></div></div><div class="gshadow"></div></div>
+  </div>
+</main>
+
+<div class="hint" id="hint">← glisse la plateforme ou utilise les flèches →</div>
+<nav class="ctrl" aria-label="Lieux">
+  <button class="nav" id="prev" aria-label="Lieu précédent">‹</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav" id="next" aria-label="Lieu suivant">›</button>
+</nav>
+
+<script>
+"use strict";
+const PLACES=[
+  {id:'madaliv',name:'MadaLiv',tag:'Plus proche de vous',img:'img/madaliv.jpg',emoji:'📦',burst:['📦','🚚','💛','⚡'],
+   accent:'#f39a12',accent2:'#2b2d42',
+   text:"Le point de départ des colis. Livraison rapide, suivi en temps réel et service partout à Madagascar : la petite scooteriste y charge sa première commande.",
+   chips:['Colis','Documents','Marchandises','Suivi en direct']},
+  {id:'ramen',name:'Yukihira',tag:'お食事処 · Échoppe de ramen',img:'img/ramen.jpg',emoji:'🍜',burst:['🍜','🌸','🥢','🏮'],
+   accent:'#e8447f',accent2:'#7a1f3d',
+   text:"Lanternes allumées, rideau rose et bouillon qui fume : on s'arrête dans la ruelle pavée pour un bol de ramen fait minute par le chef aux cheveux rouges.",
+   chips:['Ramen','Lanternes','Ruelle pavée','Petit chat']},
+  {id:'boutique',name:'La Boutique',tag:'Mode tout en rose',img:'img/boutique.jpg',emoji:'👗',burst:['👗','💖','🛍️','✨'],
+   accent:'#e0607e',accent2:'#8d3a55',
+   text:"Un petit salon de mode douillet : portants colorés, arche rosée et mannequins élégants. Idéal pour livrer une robe… ou s'offrir un nouveau look.",
+   chips:['Vêtements','Accessoires','Mannequins','Coup de cœur']},
+  {id:'ferme',name:'La Ferme',tag:'Au grand air',img:'img/ferme.jpg',emoji:'🌾',burst:['🌾','🐑','🚜','🐔'],
+   accent:'#4caf50',accent2:'#1f6f3a',
+   text:"Prairies verdoyantes, champs de blé dorés, grange rouge et tracteur chargé de citrouilles. Dernière étape avant de reprendre la route vers MadaLiv.",
+   chips:['Tracteur','Moutons','Blé doré','Grange rouge']}
+];
+const N=PLACES.length, STEP=360/N;
+const $=s=>document.querySelector(s);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- build DOM ---------- */
+const bgs=$('#bgs'), placesEl=$('#places'), dots=$('#dots'), panel=$('#panel'), root=document.documentElement;
+PLACES.forEach((p,i)=>{
+  const b=document.createElement('div');b.className='bg';b.style.backgroundImage=`url(${p.img})`;bgs.appendChild(b);p.bg=b;
+  const el=document.createElement('div');el.className='place';el.dataset.i=i;
+  let extra='';
+  if(p.id==='ramen') extra='<i class="steam" style="--x:58%;--y:60%;--d:0s"></i><i class="steam" style="--x:61%;--y:62%;--d:.9s"></i><i class="steam" style="--x:56%;--y:63%;--d:1.8s"></i>';
+  if(p.id==='ferme') extra='<i class="fly" style="--x:22%;--y:45%;--d:0s"></i><i class="fly" style="--x:70%;--y:60%;--d:1.2s"></i><i class="fly" style="--x:45%;--y:75%;--d:2.4s"></i>';
+  if(p.id==='madaliv') extra='<i class="fly" style="--x:15%;--y:82%;--d:.5s"></i><i class="fly" style="--x:80%;--y:30%;--d:1.8s"></i>';
+  el.innerHTML=`<div class="float" style="--d:${-i*1.1}s"><div class="ribbon" style="--c:${p.accent}">${p.emoji} ${p.name}</div><div class="card" style="--d:${i*1.3}s"><img src="${p.img}" alt="${p.name}" draggable="false">${extra}</div><div class="stand"></div></div>`;
+  placesEl.appendChild(el);p.el=el;
+  const d=document.createElement('button');d.className='dot-btn';d.setAttribute('aria-label',p.name);
+  d.innerHTML=`<span class="e">${p.emoji}</span><span class="t">${p.name}</span>`;d.onclick=()=>{userAct();goTo(i)};dots.appendChild(d);p.dot=d;
+  const pad=document.createElement('div');pad.className='pad';pad.innerHTML=`<span>${p.emoji}</span>`;pad.dataset.i=i;$('#spin').appendChild(pad);p.pad=pad;
+});
+/* clouds */
+for(let i=0;i<6;i++){const c=document.createElement('div');c.className='cloud';
+  c.style.top=(4+Math.random()*30)+'vh';c.style.animationDuration=(60+Math.random()*60)+'s';c.style.animationDelay=(-Math.random()*90)+'s';
+  c.style.transform=`scale(${.6+Math.random()*1.1})`;$('#clouds').appendChild(c);}
+
+/* ---------- layout ---------- */
+const L={};
+function layout(){
+  const W=innerWidth,H=innerHeight,mob=W<720;
+  L.W=W;L.H=H;L.mob=mob;
+  L.cx=W/2; L.cy=H*(mob?.69:.665);
+  L.Rx=mob?Math.min(W*.85,H*.55):Math.min(W*.46,H*.78,640);
+  L.Ry=L.Rx*.27;
+  L.cw=mob?Math.min(W*.74,H*.36*1.3):Math.min(W*.4,H*.56,560);
+  L.r=.78;
+  const tilt=Math.acos(L.Ry/L.Rx)*180/Math.PI;
+  const b=$('#base'),t=$('#top');
+  Object.assign(b.style,{left:L.cx-L.Rx+'px',top:L.cy-L.Ry+'px',width:2*L.Rx+'px',height:2*L.Ry+'px'});
+  Object.assign(t.style,{left:L.cx-L.Rx+'px',top:L.cy-L.Rx+'px',width:2*L.Rx+'px',height:2*L.Rx+'px',transform:`rotateX(${tilt}deg)`});
+  const R=L.Rx*L.r;
+  PLACES.forEach((p,i)=>{
+    const th=(-STEP*i)*Math.PI/180;
+    p.pad.style.left=(50+(R*Math.sin(th))/(2*L.Rx)*100)+'%';
+    p.pad.style.top=(50+(R*Math.cos(th))/(2*L.Rx)*100)+'%';
+    p.pad.firstChild.style.setProperty('--r',(STEP*i)+'deg');
+    p.el.style.width=L.cw+'px';
+  });
+  const gh=mob?Math.min(H*.2,170):Math.min(H*.3,300);
+  L.gw=gh*0.758;L.gh=gh;
+  const g=$('#girl');g.style.width=L.gw+'px';
+  L.gx=L.cx-L.cw*(mob?.36:.34);L.gy=L.cy+L.Ry*.9;
+}
+
+/* ---------- state ---------- */
+let phi=0, target=0, tw=null, dir=1, idx=0, vel=0, lastPhi=0;
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function frame(now){
+  // tween
+  if(tw){
+    const t=Math.min(1,(now-tw.t0)/tw.dur);
+    phi=tw.from+(tw.to-tw.from)*ease(t);
+    if(t>=1){const done=tw.cb;tw=null;done&&done();}
+  }
+  render(now);
+  requestAnimationFrame(frame);
+}
+function render(now){
+  const R=L.Rx*L.r, Ry=L.Ry*L.r;
+  const v=Math.abs(phi-lastPhi);vel=vel*.8+v*.2;lastPhi=phi;
+  $('#spin').style.transform=`rotate(${-phi}deg)`;
+  const moving=vel>.35;
+  const g=$('#girl');
+  g.classList.toggle('moving',moving);
+  const px=(mx-.5)*14, py=(my-.5)*6;
+  PLACES.forEach((p,i)=>{
+    const a=(-STEP*i+phi)*Math.PI/180;
+    const s=Math.sin(a),c=Math.cos(a);
+    const f=(c+1)/2;
+    const sc=.5+.5*Math.pow(f,1.3);
+    const x=L.cx+R*s+px*(c*.6), y=L.cy+Ry*c;
+    p.el.style.transform=`translate(${x-L.cw/2}px,${y-(L.cw/1.3+14)*sc-0}px) scale(${sc})`;
+    p.el.style.zIndex=Math.round((c+1)*100);
+    const act=Math.max(0,c);
+    p.el.style.filter=`brightness(${.62+.38*Math.pow(f,2)}) saturate(${.8+.2*f})`;
+  });
+  const bob=moving?Math.sin(now/45)*1.5:0;
+  g.style.transform=`translate(${L.gx-L.gw/2+px*1.4}px,${L.gy-L.gh+bob}px)`;
+  if(moving&&now-lastPuff>85){lastPuff=now;puff();}
+}
+let lastPuff=0;
+function puff(){
+  const el=document.createElement('i');el.className='puff';
+  const s=6+Math.random()*10;const rev=$('#girl').classList.contains('rev');
+  const x=L.gx+(rev?-1:1)*(L.gw*.42)+ (Math.random()*10-5), y=L.gy-6+(Math.random()*6-3);
+  Object.assign(el.style,{width:s+'px',height:s+'px',left:x+'px',top:y+'px',position:'fixed',zIndex:899,'--dx':(rev?-1:1)*(20+Math.random()*30)+'px'});
+  document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+}
+
+/* ---------- navigation ---------- */
+let k=0; // continuous stop counter, target phi = k*STEP
+function setInfo(i){
+  const p=PLACES[i];
+  root.style.setProperty('--accent',p.accent);root.style.setProperty('--accent2',p.accent2);
+  PLACES.forEach((q,j)=>{q.bg.classList.toggle('on',j===i);q.dot.classList.toggle('on',j===i)});
+  panel.innerHTML=`<div class="swap"><div class="num">Étape ${i+1}/${N} <i></i></div><h1>${p.emoji} ${p.name}</h1><div class="tag">${p.tag}</div><p>${p.text}</p><div class="chips">${p.chips.map(c=>`<span>${c}</span>`).join('')}</div></div>`;
+}
+function travel(newK,cb){
+  const diff=newK-k; if(diff===0){cb&&cb();return;}
+  dir=diff>0?1:-1;
+  $('#girl').classList.toggle('rev',dir<0);
+  k=newK; idx=((k%N)+N)%N;
+  setInfo(idx);
+  tw={from:phi,to:k*STEP,t0:performance.now(),dur:reduce?300:1500+Math.abs(diff)*0+ (Math.abs(diff)-1)*500,cb:()=>{arrive();cb&&cb()}};
+}
+function arrive(){
+  burst(idx);
+}
+function goTo(i){
+  let best=null;
+  for(let m=-2;m<=2;m++){const cand=Math.round(k/N)*N+i+m*N;
+    if(best===null||Math.abs(cand-k)<Math.abs(best-k)||(Math.abs(cand-k)===Math.abs(best-k)&&cand>best))best=cand;}
+  travel(best);
+}
+const next=()=>travel(k+1), prev=()=>travel(k-1);
+function burst(i){
+  if(reduce)return;
+  const p=PLACES[i];const r=p.el.getBoundingClientRect();
+  for(let n=0;n<10;n++){
+    const e=document.createElement('span');e.className='emoji';e.textContent=p.burst[n%p.burst.length];
+    e.style.left=(r.left+r.width*(.15+Math.random()*.7))+'px';e.style.top=(r.top+r.height*.2)+'px';
+    e.style.setProperty('--dx',(Math.random()*120-60)+'px');e.style.setProperty('--rot',(Math.random()*60-30)+'deg');
+    e.style.animationDelay=(n*70)+'ms';document.body.appendChild(e);setTimeout(()=>e.remove(),2600);
+  }
+}
+
+/* ---------- input ---------- */
+let mx=.5,my=.5;
+addEventListener('pointermove',e=>{mx=e.clientX/innerWidth;my=e.clientY/innerHeight;});
+const stage=$('#stage');
+let drag=null;
+stage.addEventListener('pointerdown',e=>{userAct();drag={x:e.clientX,moved:false,startPhi:phi};stage.setPointerCapture(e.pointerId);});
+stage.addEventListener('pointermove',e=>{
+  if(!drag)return;const dx=e.clientX-drag.x;
+  if(!drag.moved&&Math.abs(dx)>8){drag.moved=true;tw=null;drag.startPhi=phi;drag.x=e.clientX;stage.classList.add('drag');}
+  else if(drag.moved){phi=drag.startPhi+dx*.28;}
+});
+function endDrag(e){
+  if(!drag)return;const d=drag;drag=null;stage.classList.remove('drag');
+  if(!d.moved){
+    const el=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('.place');
+    if(el)goTo(+el.dataset.i);
+    return;
+  }
+  const nk=Math.round(phi/STEP);
+  $('#girl').classList.toggle('rev',phi<d.startPhi);
+  k=nk;idx=((k%N)+N)%N;setInfo(idx);
+  tw={from:phi,to:nk*STEP,t0:performance.now(),dur:800,cb:arrive};
+}
+stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);
+let wheelT=0;
+addEventListener('wheel',e=>{const n=performance.now();if(n-wheelT<900||Math.abs(e.deltaY)<8)return;wheelT=n;userAct();e.deltaY>0?next():prev();},{passive:true});
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'){userAct();next();}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){userAct();prev();}
+  else if(/^[1-4]$/.test(e.key)){userAct();goTo(+e.key-1);}
+  else if(e.key===' '){e.preventDefault();toggleAuto();}
+});
+$('#next').onclick=()=>{userAct();next()};$('#prev').onclick=()=>{userAct();prev()};
+
+/* ---------- autoplay ---------- */
+let auto=true,autoTimer=null,idleT=0;
+function userAct(){ $('#hint').style.opacity=0; schedule(9000); }
+function schedule(delay){clearTimeout(autoTimer);if(!auto)return;autoTimer=setTimeout(()=>{if(document.hidden||tw||drag){schedule(1500);return;}next();schedule(5200);},delay);}
+function toggleAuto(){auto=!auto;$('#auto').setAttribute('aria-pressed',auto);$('#autoI').textContent=auto?'⏸':'▶';$('#autoT').textContent=auto?'Visite auto':'Visite manuelle';if(auto)schedule(1200);else clearTimeout(autoTimer);}
+$('#auto').onclick=e=>{e.stopPropagation();toggleAuto();};
+$('#auto').addEventListener('pointerdown',e=>e.stopPropagation());
+
+/* ---------- sparkles ---------- */
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];
+function fxSize(){const d=devicePixelRatio||1;cv.width=innerWidth*d;cv.height=innerHeight*d;cx.setTransform(d,0,0,d,0,0);}
+function mkPart(init){return{x:Math.random()*innerWidth,y:init?Math.random()*innerHeight:innerHeight+10,r:1.5+Math.random()*3.5,v:.25+Math.random()*.7,w:Math.random()*6,a:.3+Math.random()*.6};}
+function fxLoop(t){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  const col=getComputedStyle(root).getPropertyValue('--accent').trim()||'#fff';
+  for(const p of parts){
+    p.y-=p.v*(1+vel*.35);p.x+=Math.sin(t/900+p.w)*.5-(vel>.35?dir*vel*.6:0);
+    if(p.y<-10||p.x<-20||p.x>innerWidth+20){Object.assign(p,mkPart(false));}
+    cx.globalAlpha=p.a;cx.fillStyle='#fff';cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fill();
+    cx.globalAlpha=p.a*.35;cx.fillStyle=col;cx.beginPath();cx.arc(p.x,p.y,p.r*2.2,0,7);cx.fill();
+  }
+  requestAnimationFrame(fxLoop);
+}
+
+/* ---------- init ---------- */
+layout();fxSize();
+addEventListener('resize',()=>{layout();fxSize();});
+if(!reduce){parts=Array.from({length:56},()=>mkPart(true));requestAnimationFrame(fxLoop);}
+// intro : la plateforme tourne vite et la petite fille arrive sur le premier lieu
+phi=-STEP*3;lastPhi=phi;
+const g0=$('#girl');
+setInfo(0);
+requestAnimationFrame(t=>{
+  tw={from:phi,to:0,t0:t,dur:reduce?200:3200,cb:()=>{arrive();panel.classList.remove('hide');schedule(7000);}};
+  requestAnimationFrame(frame);
+});
+setTimeout(()=>{$('#hint').style.opacity=0},12000);
+</script>
+</body>
+</html>
